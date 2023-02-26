@@ -1,0 +1,39 @@
+﻿<div class="container mt-5">
+    <div class="col-12">
+        <div class="list-group"> 
+
+            @if(products == null)
+            {
+                <p>Loading products</p>
+            }
+            else 
+            {
+                @foreach (var product in products)
+               {
+                   <ProductItem Item="@product" />
+               }
+        }
+
+         </div>
+    </div>
+</div>
+
+@code {
+    private Product[] products;
+
+    private async Task GetProductAsynch()
+    {
+        products = await Http.GetFromJsonAsync<Product[]>("https://localhost:44369/api/Products");
+    }
+
+    protected override void OnInitialized()
+    {
+        var timer = new Timer(new TimerCallback(_ => InvokeAsync(() => StateHasChanged())), null, 1000, 1000);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await GetProductAsynch();
+    }
+
+}
